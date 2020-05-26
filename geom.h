@@ -29,6 +29,11 @@ using namespace Math;
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_triangle_primitive.h>
 
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/Triangulation_face_base_with_info_2.h>
+#include <CGAL/Triangulation_2.h>
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Line_2 Line_2;
 typedef K::Point_2 Point_2;
@@ -59,6 +64,44 @@ typedef CGAL::AABB_traits<K, Primitive> Traits_poly;
 typedef CGAL::AABB_tree<Traits_poly> Tree;
 typedef Tree::Point_and_primitive_id Point_and_primitive_id;
 
+
+struct FaceInfo2
+{
+	FaceInfo2(){}
+	int nesting_level;
+	bool in_domain(){
+		return nesting_level % 2 == 1;
+	}
+};
+
+
+// ----------------------- A CGAL::Vertex with decoration ------------------
+template < class Gt, class Vb = CGAL::Triangulation_vertex_base_2<Gt> >
+class Vertex : public  Vb {
+	typedef Vb superclass;
+public:
+	typedef typename Vb::Vertex_handle      Vertex_handle;
+	typedef typename Vb::Point              Point;
+
+	template < typename TDS2 >
+	struct Rebind_TDS {
+		typedef typename Vb::template Rebind_TDS<TDS2>::Other Vb2;
+		typedef Vertex<Gt, Vb2> Other;
+	};
+
+public:
+	Vertex() : superclass() {}
+	Vertex(const Point & p) : superclass(p) {}
+	int index;
+};
+
+typedef CGAL::Triangulation_2<K>         Triangulation;
+typedef Vertex<K>                      Vb;
+typedef CGAL::Triangulation_face_base_with_info_2<FaceInfo2, K>    Fbb;
+typedef CGAL::Constrained_triangulation_face_base_2<K, Fbb>        Fb;
+typedef CGAL::Triangulation_data_structure_2<Vb, Fb>               TDS;
+typedef CGAL::Exact_predicates_tag                                Itag;
+typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag>  CDT;
 
 template<class HDS>
 class polyhedron_builder : public CGAL::Modifier_base<HDS> {
@@ -195,6 +238,9 @@ CGAL_3D_Distance_Point_Point(double p_0_x, double p_0_y, double p_0_z, double p_
                              double p_1_y, double p_1_z);
 extern "C" CARPENTRY_GEOM_EXPORT double
 CGAL_3D_Distance_Point_Polygon(const std::vector<Vector3d> &py, const Vector3d &p);
+
+
+extern "C" CARPENTRY_GEOM_EXPORT void CGAL_2D_Polygon_Triangulation(const std::vector<std::vector<Vector2d>> &polys, std::vector<std::vector<int>> &faces);
 
 //implementation in "mesh.cpp"
 //####################################################################################
