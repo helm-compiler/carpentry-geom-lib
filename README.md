@@ -1,6 +1,6 @@
 # Geometric Library for Carpentry Compiler [Project page](https://grail.cs.washington.edu/projects/carpentrycompiler/)
 
-Our carpentry compiler converts high-level geometric designs made by users to low-level fabrication instructions that can be directly followed to manufacture parts. The compiler performs multi-objective optimization on the low-level instructions to generate Pareto-optimal candidates.
+Our carpentry compiler converts high-level geometric designs made by users to low-level fabrication instructions that can be directly followed to manufacture parts. The compiler performs multi-objective optimization on the low-level instructions to generate Pareto-optimal candidates. This repository provides a set of fundemental geometric process functions for Carpentry Compiler, with the output of a dynamic link library file, "carpentry_geom.dll".
 
 # Dependency
 
