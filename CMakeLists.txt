@@ -1,11 +1,10 @@
-
 cmake_minimum_required(VERSION 3.5)
 project(carpentry_geom)
 
 set(CMAKE_CXX_STANDARD 11)
 
 set(CGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE TRUE)
-find_package( CGAL QUIET COMPONENTS Core )
+find_package( CGAL QUIET COMPONENTS Core GMP MPFI)
 if ( NOT CGAL_FOUND )
     message(STATUS "This project requires the CGAL library, and will not be compiled.")
     return()
